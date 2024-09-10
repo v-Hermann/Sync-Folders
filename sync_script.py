@@ -17,10 +17,8 @@ import hashlib
 import time
 import argparse
 import logging
-import sys
 from typing import Dict, Any
 from logging.handlers import RotatingFileHandler
-from tqdm import tqdm
 
 CHUNK_SIZE = 4096
 
@@ -100,7 +98,7 @@ def remove_outdated_items(source_items: set, replica: str, replica_items: set, s
         replica_items (set): Set of items in the replica folder.
         stats (Dict[str, int]): Dictionary to store statistics (deleted, errors).
     """
-    for item in tqdm(replica_items - source_items, desc="Removing outdated items", disable=not sys.stdout.isatty()):
+    for item in replica_items - source_items:
         item_path = os.path.join(replica, item)
         try:
             if os.path.isfile(item_path):
@@ -174,7 +172,7 @@ def sync_folders(source: str, replica: str) -> Dict[str, int]:
     remove_outdated_items(source_items, replica, replica_items, stats)
 
     # Sync new or updated files
-    for item in tqdm(source_items, desc="Syncing items", disable=not sys.stdout.isatty()):
+    for item in source_items:
         source_path = os.path.join(source, item)
         replica_path = os.path.join(replica, item)
         sync_item(source_path, replica_path, stats)
